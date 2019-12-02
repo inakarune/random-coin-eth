@@ -3,7 +3,9 @@ import App from './App.vue'
 import './registerServiceWorker'
 import router from './router'
 import store from './store'
+import SocketPlugin from './shared/socket-plugin'
 
+// Vue.use(SocketPlugin)
 Vue.config.productionTip = false
 
 new Vue({

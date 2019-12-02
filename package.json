@@ -5,11 +5,18 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "start": "vue-cli-service build && electron .",
+    "package-win": "vue-cli-service build && electron-packager . Probit_Auto_Exchanging --platform=win32 --arch=ia32 --icon=icon-256.ico --asar.unpack=*.{node,dll}"
   },
   "dependencies": {
+    "@types/socket.io-client": "^1.4.32",
+    "axios": "^0.19.0",
     "core-js": "^3.4.3",
+    "electron": "^7.1.2",
+    "electron-packager": "^14.1.1",
     "register-service-worker": "^1.6.2",
+    "socket.io-client": "^2.3.0",
     "vue": "^2.6.10",
     "vue-class-component": "^7.0.2",
     "vue-property-decorator": "^8.3.0",

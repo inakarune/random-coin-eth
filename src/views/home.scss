@@ -1,0 +1,102 @@
+@import '../assets/css/window.scss';
+.vertical {
+	flex-direction: column;
+}
+.money-box {
+	font-size: 12px;
+}
+.user-box {
+	font-size: 12px;
+    text-align: left;
+	padding: 10px;
+
+	& > span {
+		font-weight: 900;
+	}
+}
+table {
+	width: 100%;
+	border-radius: 1em;
+    border-collapse: collapse;
+    overflow: hidden;
+}
+thead {
+	background-color: #13143f;
+    color: white;
+    font-size: 14px;
+}
+
+th {
+	font-weight: 100;
+	padding: 10px;
+}
+
+td {
+	padding: 5px;
+	font-size: 14px;
+}
+.letter {
+	color: #13143f;
+}
+.mint-letter {
+	color: #00c89c;
+}
+.red-letter {
+	color: #ff2950;
+}
+.orange-letter {
+	color: #ff9b00;
+}
+tr:nth-child(even) {
+	background-color: #eee;
+}
+form {
+	padding: 20px;
+	box-sizing: border-box;
+	border-top: 1px solid #ddd;
+}
+
+.input-box {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 15px;
+	font-size: 14px;
+	font-weight: 100;
+}
+input[type="number"], input[type="text"] {
+	border-radius: 10px;
+    border: 1px solid #ddd;
+    padding: 10px;
+	outline: none;
+}
+button {
+	border: none;
+	color: white;
+	border-radius: 5px;
+    padding: 10px 15px;
+	font-size: 14px
+}
+.mint {
+	background-color: #00c89c;
+}
+.red {
+	background-color: #ff2950;
+	margin: 0px 10px;
+}
+.orange {
+	background-color: #ff9b00;
+}
+.blue {
+	background-color: #13143f;
+	margin-right: 10px;
+}
+.average {
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+
+	& > span:nth-child(1) {
+		font-size: 20px;
+	}
+}
