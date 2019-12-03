@@ -2,7 +2,7 @@
   	<div class="window-box">
 	  	<Titlebar />
 	  	<div class="box-content vertical">
-			<div class="msg-box" :style="{ 'background-color': bg }" v-show="show">{{ msg }}</div>
+			<div class="msg-box" :style="{ 'background-color': bg }" v-show="show">{{ msg }}<span @click="closeAlert">x</span></div>
 			<!-- <table>
 				<thead>
 					<th>가격</th>
@@ -46,14 +46,6 @@
 				<div class="input-box">
 					<label>매도주기</label>
 					<input type="text" v-model="randomTime">
-				</div>
-				<div class="input-box">
-					<label>시작시간1</label>
-					<input type="text" v-model="timeOne">
-				</div>
-				<div class="input-box">
-					<label>시작시간2</label>
-					<input type="text" v-model="timeTwo">
 				</div>
 				<button class="mint" :disabled="type === 'cancel'" @click="run">실행</button>
 				<button class="red" @click="cancelOrder">전체취소</button>
@@ -104,8 +96,6 @@ export default class Home extends Vue {
 	private bg: string = '#00c89c';
 	private show:boolean = false;
 	private msg: string = '';
-	private timeOne: string = '';
-	private timeTwo: string = '';
 
 	private mounted() {
 		// const ws = new WebSocket('wss://api.probit.com/api/exchange/v1/ws');
@@ -167,9 +157,10 @@ export default class Home extends Vue {
 		this.msg = msg;
 		this.bg = color;
 		this.show = true;
-		setTimeout(() => {
-			this.show = false;
-		}, 3000);
+	}
+
+	private closeAlert() {
+		this.show = false;
 	}
 
 	private refresh(): void {
@@ -195,7 +186,7 @@ export default class Home extends Vue {
 		}
 
 		this.order.time = setInterval(() => {
-			const max: any = +this.randomTime * 1000
+			const max: any = +this.randomTime * 1000;
 			setTimeout(() => {
 				this.sellOrder();
 			}, that.makeRandom(1, max));
@@ -205,6 +196,7 @@ export default class Home extends Vue {
 				this.buyOrder();
 			}, that.makeRandom(10000, buy_max));
 		}, +this.randomTime * 1000);
+
 		alert('입력한 값에 따라 실행됩니다.');
 	}
 
@@ -277,6 +269,11 @@ export default class Home extends Vue {
 			if (sell >= buy) {
 				if (list.data[idx].client_order_id.includes('today')) {console.log('buy!', list.data[idx].limit_price)
 					const response: any = await orderService.createNewOrder({ market_id: 'CXAT-ETH', type: 'limit', side: 'buy', time_in_force: 'gtc', limit_price: list.data[idx].limit_price, quantity: list.data[idx].quantity });
+					if (Notification.permission === "granted") {
+						var notification = new Notification("ETH 매수 알림", {
+							body: `${ list.data[idx].client_order_id }의 ${ list.data[idx].limit_price }을 매수하였습니다.`
+						});
+					}
 				}
 			}
 		} catch (error) {

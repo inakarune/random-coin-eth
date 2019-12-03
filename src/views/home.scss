@@ -6,6 +6,13 @@
 	left: 0px;
 	padding: 10px;
 	width: 100%;
+
+	& > span {
+		position: fixed;
+		right: 15px;
+		cursor: pointer;
+		text-align: center;
+	}
 }
 .vertical {
 	flex-direction: column;

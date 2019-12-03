@@ -1,13 +1,12 @@
 <template>
     <div class="titlebar">
         <h1>Probit Auto Exchanging-ETH</h1>
-        <button @click="closeBtn">x</button>
+        <button class="small" @click="small">ㅡ</button>
+        <button @click="closeBtn">X</button>
     </div>
 </template>
 <script lang="ts">
-import {
-  Component, Vue, Prop, Emit,
-} from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 
 const electron = window.require('electron');
 const { ipcRenderer, remote } = electron;
@@ -19,6 +18,10 @@ export default class Titlebar extends Vue {
     private closeBtn() {
         const window = remote.getCurrentWindow();
         window.close();
+    }
+
+    private small() {
+        ipcRenderer.send('mini');
     }
 }
 </script>
@@ -53,5 +56,9 @@ export default class Titlebar extends Vue {
         color: white;
         background-color: #ddd;
     }
+}
+.small {
+    margin-left: auto;
+    margin-right: 5px;
 }
 </style>

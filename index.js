@@ -4,10 +4,10 @@ const url = `file://${__dirname}/dist/index.html`;
 let win, loginWin;
 function createWindow() {
     win = new BrowserWindow({
-        // width: 390,
+        width: 400,
+        height: 500,
+        // width: 1000,
         // height: 1022,
-        width: 1000,
-        height: 1022,
         webPreferences: {
             nodeIntegration: true
         },
@@ -43,6 +43,9 @@ function createWindow() {
 }
 
 app.on('ready', createWindow);
+ipcMain.on('mini', (event, arg) => {
+    win.minimize();
+});
 ipcMain.on('showAfterLogin', (event, arg) => {
     loginWin.close();
     win.show();
