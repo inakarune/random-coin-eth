@@ -1,4 +1,13 @@
-const { app, BrowserWindow, ipcMain } = require('electron')
+const { app, BrowserWindow, ipcMain } = require('electron');
+const log = require('electron-log');
+const fs = require('fs');
+
+log.transports.file.level = 'info';
+log.transports.file.format = '{h}:{i}:{s}:{ms} {text}';
+log.transports.file.maxSize = 5 * 1024 * 1024;
+log.transports.file.file = `${__dirname}/log.txt`;
+log.transports.file.streamConfig = { flags: 'w' };
+log.transports.file.stream = fs.createWriteStream('log.txt');
 
 const url = `file://${__dirname}/dist/index.html`;
 let win, loginWin;
@@ -30,7 +39,7 @@ function createWindow() {
         }
     });
 
-    win.webContents.openDevTools();
+    // win.webContents.openDevTools();
     win.loadURL(`${ url }`);
 
     loginWin.setAlwaysOnTop(true);
