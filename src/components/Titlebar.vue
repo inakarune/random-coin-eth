@@ -50,11 +50,13 @@ export default class Titlebar extends Vue {
         color: #ddd;
         background-color: white;
         border-radius: 5px;
+        cursor: pointer;
     }
 
     & > button:hover {
         color: white;
         background-color: #ddd;
+        cursor: pointer;
     }
 }
 .small {
