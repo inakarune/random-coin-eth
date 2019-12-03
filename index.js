@@ -4,8 +4,10 @@ const url = `file://${__dirname}/dist/index.html`;
 let win, loginWin;
 function createWindow() {
     win = new BrowserWindow({
-        width: 390,
-        height: 464,
+        // width: 390,
+        // height: 1022,
+        width: 1000,
+        height: 1022,
         webPreferences: {
             nodeIntegration: true
         },
@@ -17,8 +19,8 @@ function createWindow() {
         parent: win,
         show: false,
         frame: false,
-        width: 400,
-        height: 235,
+        width: 410,
+        height: 250,
         resizable: false,
         movable:true,
         center: true,
@@ -28,9 +30,10 @@ function createWindow() {
         }
     });
 
-    // win.webContents.openDevTools();
+    win.webContents.openDevTools();
     win.loadURL(`${ url }`);
 
+    loginWin.setAlwaysOnTop(true);
     // loginWin.webContents.openDevTools();
     loginWin.once('ready-to-show', () => {
         loginWin.show();

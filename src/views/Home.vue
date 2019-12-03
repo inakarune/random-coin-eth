@@ -2,6 +2,7 @@
   	<div class="window-box">
 	  	<Titlebar />
 	  	<div class="box-content vertical">
+			<div class="msg-box" :style="{ 'background-color': bg }" v-show="show">{{ msg }}</div>
 			<!-- <table>
 				<thead>
 					<th>가격</th>
@@ -9,89 +10,19 @@
 					<th>합계</th>
 				</thead>
 				<tbody>
-					<tr>
-						<td class="mint-letter">366783.0</td>
-						<td class="letter">0.0000733</td>
-						<td></td>
-					</tr>
-					<tr>
-						<td class="mint-letter">366783.0</td>
-						<td class="letter">0.0000733</td>
-						<td></td>
-					</tr>
-					<tr>
-						<td class="mint-letter">366783.0</td>
-						<td class="letter">0.0000733</td>
-						<td></td>
-					</tr>
-					<tr>
-						<td class="mint-letter">366783.0</td>
-						<td class="letter">0.0000733</td>
-						<td></td>
-					</tr>
-					<tr>
-						<td class="mint-letter">366783.0</td>
-						<td class="letter">0.0000733</td>
-						<td></td>
-					</tr>
-					<tr>
-						<td class="mint-letter">366783.0</td>
-						<td class="letter">0.0000733</td>
-						<td></td>
-					</tr>
-					<tr>
-						<td class="mint-letter">366783.0</td>
-						<td class="letter">0.0000733</td>
-						<td></td>
-					</tr>
-					<tr>
-						<td class="mint-letter">366783.0</td>
-						<td class="letter">0.0000733</td>
+					<tr v-for="(item, idx) in order.sell.slice(0, 10)" :key="idx">
+						<td class="mint-letter">{{ item.limit_price }}</td>
+						<td class="letter">{{ item.quantity }}</td>
 						<td></td>
 					</tr>
 					<tr>
 						<td class="average" colspan="3"><span>0.0005100</span><span>0.0077KRW</span></td>
 					</tr>
-					<tr>
-						<td class="orange-letter">350000.0</td>
-						<td class="letter">0.0000733</td>
+					<tr v-for="(item, idx) in order.buy.slice(0, 10)" :key="idx">
+						<td class="orange-letter">{{ item.limit_price }}</td>
+						<td class="letter">{{ item.quantity }}</td>
 						<td class="red-letter"></td>
-					</tr>			
-					<tr>
-						<td class="orange-letter">350000.0</td>
-						<td class="letter">0.0000733</td>
-						<td class="red-letter"></td>
-					</tr>	
-					<tr>
-						<td class="orange-letter">350000.0</td>
-						<td class="letter">0.0000733</td>
-						<td class="red-letter"></td>
-					</tr>
-					<tr>
-						<td class="orange-letter">350000.0</td>
-						<td class="letter">0.0000733</td>
-						<td class="red-letter"></td>
-					</tr>
-					<tr>
-						<td class="orange-letter">350000.0</td>
-						<td class="letter">0.0000733</td>
-						<td class="red-letter"></td>
-					</tr>
-					<tr>
-						<td class="orange-letter">350000.0</td>
-						<td class="letter">0.0000733</td>
-						<td class="red-letter"></td>
-					</tr>
-					<tr>
-						<td class="orange-letter">350000.0</td>
-						<td class="letter">0.0000733</td>
-						<td class="red-letter"></td>
-					</tr>
-					<tr>
-						<td class="orange-letter">350000.0</td>
-						<td class="letter">0.0000733</td>
-						<td class="red-letter"></td>
-					</tr>								
+					</tr>										
 				</tbody>
 			</table> -->
 			<form v-on:submit.prevent>
@@ -116,13 +47,21 @@
 					<label>매도주기</label>
 					<input type="text" v-model="randomTime">
 				</div>
-				<button class="mint" @click="run">실행</button>
+				<div class="input-box">
+					<label>시작시간1</label>
+					<input type="text" v-model="timeOne">
+				</div>
+				<div class="input-box">
+					<label>시작시간2</label>
+					<input type="text" v-model="timeTwo">
+				</div>
+				<button class="mint" :disabled="type === 'cancel'" @click="run">실행</button>
 				<button class="red" @click="cancelOrder">전체취소</button>
 				<button class="blue" @click="refresh">새로고침</button>
 				<button class="orange" @click="exit">종료</button>
 			</form>
 			<div class="user-box"><span>접속 아이디: {{ id }} 님</span></div>
-			<div class="money-box">총 잔고: {{ total }} | 사용가능 잔고: {{ available }}</div>
+			<div class="money-box"><span>총 잔고: {{ total }}</span> <span>사용가능 잔고: {{ available }}</span></div>
     	</div>
   	</div>
 </template>
@@ -154,14 +93,19 @@ export default class Home extends Vue {
 	private randomQuantity: string = '';
 	private randomTime: string = '';
 	private order: any = {
-		sell: '',
-		buy: '',
+		sell: [],
+		buy: [],
 		time: ''
 	};
 	private type: string = '';
 	private ws: any = new WebSocket('wss://api.probit.com/api/exchange/v1/ws');
 	private available: number = 0;
 	private total: number = 0;
+	private bg: string = '#00c89c';
+	private show:boolean = false;
+	private msg: string = '';
+	private timeOne: string = '';
+	private timeTwo: string = '';
 
 	private mounted() {
 		// const ws = new WebSocket('wss://api.probit.com/api/exchange/v1/ws');
@@ -177,6 +121,7 @@ export default class Home extends Vue {
 			const data = JSON.parse(event.data);
 			console.log('Message #########', data);
 			if (data.errorCode === 'UNAUTHORIZED') {
+				this.showAlert('인증이 승인되지 않습니다.', '#ff2950');
 				const msg = {
 					type: 'authorization',
 					token: localStorage.getItem('tken')
@@ -185,21 +130,30 @@ export default class Home extends Vue {
 			}
 
 			if (data.type === 'authorization' && data.result === 'ok') {
-				// const msg = {
-				// 	type: 'subscribe',
-				// 	channel: 'open_order'
-				// };
+				const msg1 = {
+					type: 'subscribe',
+					channel: 'open_order'
+				};
 				const msg = {
 					type: 'subscribe',
 					channel: 'balance'
 				};
 				this.id = localStorage.getItem('id');
 				this.login(this.id);
+				this.ws.send(JSON.stringify(msg1));
 				this.ws.send(JSON.stringify(msg));
 			} else if (data.channel === 'balance') {
-				if (data.data.hasOwnProperty('KRW')) {
-					this.available = data.data.KRW.available;
-					this.total = data.data.KRW.total;
+				if (data.data.hasOwnProperty('ETH')) {
+					this.available = data.data.ETH.available;
+					this.total = data.data.ETH.total;
+				}
+			} else if (data.channel === 'open_order') {
+				for (let item of data.data) {
+					if (item.side === 'buy') {
+						this.order.buy.push(item);
+					} else {
+						this.order.sell.push(item);
+					}
 				}
 			}
 		};
@@ -209,21 +163,32 @@ export default class Home extends Vue {
 		}
 	}
 
+	private showAlert(msg: string, color: string): void {
+		this.msg = msg;
+		this.bg = color;
+		this.show = true;
+		setTimeout(() => {
+			this.show = false;
+		}, 3000);
+	}
+
 	private refresh(): void {
 		location.reload();
 	}
 
-	async login(key: any): Promise<any> {console.log('try login')
+	async login(key: any): Promise<any> {
         try {
 			const response: any = await userService.getToken({ id: user[key].id, password: user[key].password });
 			console.log('login response -------->', response)
-            localStorage.setItem('tken', response.data.access_token);
+			localStorage.setItem('tken', response.data.access_token);
+			this.showAlert('자동 로그인되었습니다.', '#00c89c');
         } catch (error) {
             console.error(error);
         }
     }
 
 	private run() {
+		this.type = 'cancel';
 		const that = this;
 		if (this.orderMax === '' || this.orderMin === '' || this.orderQuantity === '' || this.orderSum === '' || this.randomTime === '') {
 			return alert('하나라도 입력란이 비어 있으면 안됩니다.');
@@ -240,12 +205,12 @@ export default class Home extends Vue {
 				this.buyOrder();
 			}, that.makeRandom(10000, buy_max));
 		}, +this.randomTime * 1000);
-
+		alert('입력한 값에 따라 실행됩니다.');
 	}
 
 	async getOpenOrder(): Promise<any> {//모든 오픈오더 리스트 가져오기
 		try {
-			const response: any = await orderService.getOpenOrder('CXAT-KRW');
+			const response: any = await orderService.getOpenOrder('CXAT-ETH');
 			console.log('openorder__________', response)
 			return response.data;
 		} catch (error) {
@@ -255,7 +220,7 @@ export default class Home extends Vue {
 
 	async getOrderList(): Promise<any> {
 		try {
-			const response: any = await orderService.getOrderBook('CXAT-KRW');
+			const response: any = await orderService.getOrderBook('CXAT-ETH');
 
 		} catch (error) {
 			console.error(error);
@@ -263,22 +228,23 @@ export default class Home extends Vue {
 	}
 
 	private makeRandom(min: number, max: number): any {
-		return ((Math.random() * (max - min + 1)) + min).toFixed(2);
+		return ((Math.random() * (max - min + 0.0000001)) + min).toFixed(8);
 	}
 
 	async sellOrder(): Promise<any> {
 		this.randomNum = this.makeRandom(+this.orderMin, +this.orderMax);
 		this.randomQuantity = this.makeRandom(2000, +this.orderQuantity).split('.')[0];
 		try {
-			const response: any = await orderService.createNewOrder({ market_id: 'CXAT-KRW', type: 'limit', side: 'sell', time_in_force: 'gtc', limit_price: this.randomNum, quantity: this.randomQuantity, client_order_id: 'today' + new Date().getTime() });
+			const response: any = await orderService.createNewOrder({ market_id: 'CXAT-ETH', type: 'limit', side: 'sell', time_in_force: 'gtc', limit_price: this.randomNum, quantity: this.randomQuantity, client_order_id: 'today' + new Date().getTime() });
 			console.log('sellOrder ----->', response);
 		} catch (error) {
 			console.error(error);
 			if (error.response.data.errorCode === 'UNAUTHORIZED') {
+				this.showAlert('토큰이 만료되어 승인이 거부되었습니다. 로그인을 시도합니다.', '#ff2950');
 				this.login(this.id);
 			}
 			if (error.response.data.errorCode.includes('INVALID_MARKET')) {
-				alert('매수할 가격이 존재하지 않습니다.');
+				this.showAlert('매수할 가격이 존재하지 않습니다.', '#ff2950');
 			}
 		}
 	}
@@ -310,13 +276,13 @@ export default class Home extends Vue {
 
 			if (sell >= buy) {
 				if (list.data[idx].client_order_id.includes('today')) {console.log('buy!', list.data[idx].limit_price)
-					const response: any = await orderService.createNewOrder({ market_id: 'CXAT-KRW', type: 'limit', side: 'buy', time_in_force: 'gtc', limit_price: list.data[idx].limit_price, quantity: list.data[idx].quantity });
+					const response: any = await orderService.createNewOrder({ market_id: 'CXAT-ETH', type: 'limit', side: 'buy', time_in_force: 'gtc', limit_price: list.data[idx].limit_price, quantity: list.data[idx].quantity });
 				}
 			}
 		} catch (error) {
 			console.error(error);
 			if (error.response.data.errorCode === 'NOT_ENOUGH_BALANCE') {
-				// alert('잔고가 부족합니다.');
+				this.showAlert('잔고가 부족합니다.', '#ff2950');
 			}
 		}
 	}
@@ -326,10 +292,12 @@ export default class Home extends Vue {
 			const openList: any = await this.getOpenOrder();
 			for (let item of openList.data) {
 				if (item.client_order_id.includes('today')) {
-					const response: any = await orderService.cancelOrder({ market_id: 'CXAT-KRW', order_id: item.id });
+					const response: any = await orderService.cancelOrder({ market_id: 'CXAT-ETH', order_id: item.id });
 				}
 			}
-			this.order.time = null;
+			clearInterval(this.order.time);
+			this.type = 'run';
+			alert('전체취소되었습니다.');
 		} catch (error) {
 			console.error(error);
 		}

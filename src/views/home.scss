@@ -1,9 +1,20 @@
 @import '../assets/css/window.scss';
+.msg-box {
+	color: white;
+	position: fixed;
+	top: 50px;
+	left: 0px;
+	padding: 10px;
+	width: 100%;
+}
 .vertical {
 	flex-direction: column;
 }
 .money-box {
 	font-size: 12px;
+	display: flex;
+	justify-content: space-between;
+	padding: 0px 10px;
 }
 .user-box {
 	font-size: 12px;
@@ -53,7 +64,7 @@ tr:nth-child(even) {
 form {
 	padding: 20px;
 	box-sizing: border-box;
-	border-top: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
 }
 
 .input-box {
@@ -75,17 +86,42 @@ button {
 	color: white;
 	border-radius: 5px;
     padding: 10px 15px;
-	font-size: 14px
+	font-size: 14px;
+	outline: none;
 }
 .mint {
 	background-color: #00c89c;
 }
+// .mint:focus {
+// 	background-color: #00886a;
+// }
+.mint:disabled, .mint[disabled] {
+	background-color: #c6fff2;
+}
 .red {
 	background-color: #ff2950;
 	margin: 0px 10px;
+	border: none;
+	color: white;
+	border-radius: 5px;
+    padding: 10px 15px;
+	font-size: 14px;
+	text-decoration: none;
 }
+.red:active {
+	background-color: #96001b;
+}
+// .red:focus {
+// 	background-color: #96001b;
+// }
+// .red:disabled, .red[disabled] {
+// 	background-color: #ffafbe;
+// }
 .orange {
 	background-color: #ff9b00;
+}
+.orange:focus {
+	background-color: #8f5700;
 }
 .blue {
 	background-color: #13143f;
