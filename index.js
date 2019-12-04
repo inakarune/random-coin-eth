@@ -3,7 +3,7 @@ const log = require('electron-log');
 const fs = require('fs');
 
 log.transports.file.level = 'info';
-log.transports.file.format = '{h}:{i}:{s}:{ms} {text}';
+log.transports.file.format = '{y}-{m}-{d} {h}:{i}:{s}:{ms} {text}';
 log.transports.file.maxSize = 5 * 1024 * 1024;
 log.transports.file.file = `${__dirname}/log.txt`;
 log.transports.file.streamConfig = { flags: 'w' };

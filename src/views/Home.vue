@@ -67,9 +67,9 @@ import { user } from '@/env/user';
 
 declare const window: any;
 const electron = window.require('electron');
-const log = window.require('electron-log');
 const WebSocket = window.require('ws');
-const { ipcRenderer } = electron;
+const { ipcRenderer, remote } = electron;
+const log = remote.require('electron-log');
 
 @Component({
 	components: {
@@ -121,17 +121,13 @@ export default class Home extends Vue {
 			}
 
 			if (data.type === 'authorization' && data.result === 'ok') {
-				const msg1 = {
-					type: 'subscribe',
-					channel: 'open_order'
-				};
 				const msg = {
 					type: 'subscribe',
 					channel: 'balance'
 				};
 				this.id = localStorage.getItem('id');
 				this.login(this.id);
-				this.ws.send(JSON.stringify(msg1));
+				// this.ws.send(JSON.stringify(msg1));
 				this.ws.send(JSON.stringify(msg));
 			} else if (data.channel === 'balance') {
 				if (data.data.hasOwnProperty('CXAT') && data.data.hasOwnProperty('KRW') && data.data.hasOwnProperty('ETH')) {
@@ -140,19 +136,11 @@ export default class Home extends Vue {
 				if (data.data.hasOwnProperty('ETH')) {
 					this.available = data.data.ETH.available;
 					this.total = data.data.ETH.total;
-					log.info(`[ETH 총액: ${ data.data.KRW.total } ETH 사용가능 잔고: ${ data.data.KRW.available }]-----------[ETH-CXAT 총액 - 9090000 = ${ +data.data.KRW.total - 9090000 }]`);
+					log.info(`[ETH 총액: ${ data.data.ETH.total } ETH 사용가능 잔고: ${ data.data.ETH.available }]-----------[ETH-CXAT 총액 - 9090000 = ${ +data.data.ETH.total - 9090000 }]`);
 				}
 				if (data.data.hasOwnProperty('CXAT')) {
 					log.info(`[CXAT 총액: ${ data.data.CXAT.total } CXAT 사용가능 잔고: ${ data.data.CXAT.available }]`);
 				}				
-			} else if (data.channel === 'open_order') {
-				for (let item of data.data) {
-					if (item.side === 'buy') {
-						this.order.buy.push(item);
-					} else {
-						this.order.sell.push(item);
-					}
-				}
 			}
 		};
 
@@ -167,12 +155,13 @@ export default class Home extends Vue {
 		this.show = true;
 	}
 
-	private closeAlert() {
+	private closeAlert(): void {
 		this.show = false;
 	}
 
 	private refresh(): void {
 		location.reload();
+		this.showAlert('새로고침되었습니다.', '#13143f');
 	}
 
 	async login(key: any): Promise<any> {
@@ -215,15 +204,6 @@ export default class Home extends Vue {
 			return response.data;
 		} catch (error) {
 			console.error(error);			
-		}
-	}
-
-	async getOrderList(): Promise<any> {
-		try {
-			const response: any = await orderService.getOrderBook('CXAT-ETH');
-
-		} catch (error) {
-			console.error(error);
 		}
 	}
 
