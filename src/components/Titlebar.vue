@@ -15,12 +15,12 @@ declare const window: any;
 @Component
 export default class Titlebar extends Vue {
 
-    private closeBtn() {
+    private closeBtn(): void {
         const window = remote.getCurrentWindow();
         window.close();
     }
 
-    private small() {
+    private small(): void {
         ipcRenderer.send('mini');
     }
 }

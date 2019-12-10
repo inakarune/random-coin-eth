@@ -13,10 +13,9 @@ const url = `file://${__dirname}/dist/index.html`;
 let win, loginWin;
 function createWindow() {
     win = new BrowserWindow({
-        width: 400,
-        height: 500,
+        width: 335,
+        height: 830,
         // width: 1000,
-        // height: 1022,
         webPreferences: {
             nodeIntegration: true
         },
