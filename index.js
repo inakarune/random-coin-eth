@@ -13,9 +13,9 @@ const url = `file://${__dirname}/dist/index.html`;
 let win, loginWin;
 function createWindow() {
     win = new BrowserWindow({
-        width: 335,
+        // width: 335,
         height: 830,
-        // width: 1000,
+        width: 1000,
         webPreferences: {
             nodeIntegration: true
         },
@@ -38,7 +38,7 @@ function createWindow() {
         }
     });
 
-    // win.webContents.openDevTools();
+    win.webContents.openDevTools();
     win.loadURL(`${ url }`);
 
     loginWin.setAlwaysOnTop(true);

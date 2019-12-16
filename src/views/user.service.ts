@@ -2,7 +2,7 @@ import axios, { AxiosPromise } from 'axios';
 
 const baseUrl: string = `https://accounts.probit.com/token`;
 class UserService {
-    getToken({ id, password }: any): AxiosPromise<{}> {
+    public getToken({ id, password }: any): AxiosPromise<{}> {
         const authHeader = 'Basic ' + btoa(`${ id }:${ password }`);
         const config = {
             headers: {

@@ -381,8 +381,9 @@ export default class Home extends Vue {
 				clearInterval(this.order[setTime]);
 				this.g.next();
 				if (this.count === 5) {
-					alert('모든 주기가 끝났습니다. 1차주기로 돌아갑니다.');
+					this.showAlert('모든 주기가 끝났습니다. 1차주기로 돌아갑니다.', '#00c89c');
 					this.g.return(1);
+					this.count = 0;
 					this.g = this.generator();
 					this.g.next();
 				}
