@@ -272,7 +272,7 @@ export default class Home extends Vue {
 	};
 	private count: number = 0;
 
-	private mounted() {
+	private mounted(): void {
 		this.ws.onopen = () => {
 			const msg = {
 				type: 'authorization',
@@ -338,10 +338,6 @@ export default class Home extends Vue {
 		this.show = true;
 	}
 
-	private closeAlert(): void {
-		this.show = false;
-	}
-
 	private refresh(): void {
 		location.reload();
 		this.showAlert('새로고침되었습니다.', '#13143f');
@@ -354,7 +350,7 @@ export default class Home extends Vue {
 		this.type = 'cancel';
 	}
 
-	private* generator() {
+	private* generator(): Generator {
 		this.showAlert('1차주기 시작합니다.', '#00c89c');
 		this.runSetInterval('one', 'time');
 		yield
